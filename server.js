@@ -12,6 +12,7 @@ app.use("/kemenhub", router);
 // Gunakan middleware error handler
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// app.listen(PORT, () => {
+//   console.log(`Server running on port ${PORT}`);
+// });
+export default app;
