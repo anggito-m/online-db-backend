@@ -56,14 +56,32 @@ async function getAllTrucks() {
 async function getTruckById(truk_id) {
   try {
     const result = await pool.query(
-      "SELECT * FROM truk_master tm WHERE truk_id = $1",
+      "SELECT * FROM public.truk_master tm JOIN vehicle_class vc ON tm.class_id = vc.class_id WHERE tm.truk_id = $1 ",
       [truk_id]
     );
     if (result.rowCount === 0) {
       throw new Error("Truck not found");
     }
+    // shape result to another json shape
+    const shapedResult = {
+      truk_id: result.rows[0].truk_id,
+      nomor_kendaraan: result.rows[0].nomor_kendaraan,
+      panjang_kir: result.rows[0].panjang_kir,
+      lebar_kir: result.rows[0].lebar_kir,
+      tinggi_kir: result.rows[0].tinggi_kir,
+      max_berat: result.rows[0].max_berat,
+      class_id: result.rows[0].class_id,
+      vehicle_class: {
+        class_id: result.rows[0].class_id,
+        class_name: result.rows[0].class_name,
+        max_panjang: result.rows[0].max_panjang,
+        max_lebar: result.rows[0].max_lebar,
+        max_tinggi: result.rows[0].max_tinggi,
+        max_berat: result.rows[0].max_berat,
+      },
+    };
 
-    return result.rows[0];
+    return shapedResult;
   } catch (err) {
     console.error(`getTruckById error (id: ${truk_id}):`, err.message);
     throw new Error("Failed to fetch truck by ID");
